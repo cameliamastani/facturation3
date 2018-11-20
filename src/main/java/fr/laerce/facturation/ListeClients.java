@@ -12,18 +12,30 @@ import java.sql.*;
 import java.util.*;
 
 public class ListeClients extends HttpServlet {
-    Connection conn;
-
 
     @Override
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
 
-
+        Connection conn= ( Connection ) getServletContext().getAttribute("db");
         try {
 
+            //
             Statement req = conn.createStatement();
-            String query = "SELECT clt_num, clt_nom, clt_pnom, clt_loc, clt_pays FROM clients";
-            ResultSet res = req.executeQuery(query);
+            //String query = "SELECT clt_num, clt_nom, clt_pnom, clt_loc, clt_pays FROM clients";
+            //ResultSet res = req.executeQuery(query);
+
+            PreparedStatement prep = (PreparedStatement) getServletContext().getAttribute("requet1");
+            ResultSet res = prep.executeQuery();
+            PreparedStatement prep1 = (PreparedStatement) getServletContext().getAttribute("requet2");
+            prep1.setString(1,"F05");
+            ResultSet res1 = prep1.executeQuery();
+
+
+            while (res1.next()){
+                System.out.println(res1.getString("art_nom"));
+                System.out.println(res1.getString("art_num"));
+            }
+
             List<Client> clients = new ArrayList<Client>();
             while(res.next()){
                 clients.add(new Client(res.getString("clt_num"),
@@ -42,8 +54,8 @@ public class ListeClients extends HttpServlet {
         }
     }
 
-    @Override
-    public void init() throws ServletException {
+    //@Override
+    /* public void init() throws ServletException {
         super.init();
         try {
             String user = getInitParameter("user");
@@ -65,6 +77,7 @@ public class ListeClients extends HttpServlet {
         }
 
     }
-
-
+*/
 }
+
+

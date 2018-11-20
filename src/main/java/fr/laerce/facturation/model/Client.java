@@ -26,6 +26,7 @@ public class Client {
         this.loc = loc;
         this.pays = pays;
     }
+    //
 
     public String getNum() {
         return num;
