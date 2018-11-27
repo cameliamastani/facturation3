@@ -1,9 +1,18 @@
 package fr.laerce.facturation;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.io.IOException;
 import java.sql.*;
 import java.util.Properties;
+
+
+
+
+
 
 /**
  * Application Lifecycle Listener implementation class myServletListener
@@ -16,7 +25,9 @@ public class myServletListener implements ServletContextListener {
      */
     public void contextInitialized(ServletContextEvent event) {
         Connection conn;
+        Template listeClients;
         ServletContext sc = event.getServletContext();
+
 
 
         String user = sc.getInitParameter("user");
@@ -46,6 +57,16 @@ public class myServletListener implements ServletContextListener {
             sc.setAttribute("requet2",req1);
 
         }  catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+
+        Configuration cfg = new Configuration(Configuration.VERSION_2_3_25);
+        cfg.setServletContextForTemplateLoading(sc,"/WEB-INF/templates");
+        cfg.setDefaultEncoding("UTF8");
+        try {
+            listeClients = cfg.getTemplate("clients.ftl");
+            sc.setAttribute("listeClients",listeClients);
+        } catch (IOException e) {
             e.printStackTrace();
         }
 

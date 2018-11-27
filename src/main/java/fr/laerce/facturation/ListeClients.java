@@ -1,6 +1,8 @@
 package fr.laerce.facturation;
 
 import fr.laerce.facturation.model.Client;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -12,11 +14,13 @@ import java.sql.*;
 import java.util.*;
 
 public class ListeClients extends HttpServlet {
+    Template listeClients;
 
     @Override
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
 
-        Connection conn= ( Connection ) getServletContext().getAttribute("db");
+        Connection conn= ( Connection
+                ) getServletContext().getAttribute("db");
         try {
 
             //
@@ -44,21 +48,25 @@ public class ListeClients extends HttpServlet {
                         res.getString("clt_loc"),
                         res.getString("clt_pays")));
             }
-            httpServletRequest.setAttribute("clients", clients);
-            String laVue = "clients.jsp";
-            getServletConfig().getServletContext()
-                    .getRequestDispatcher("/WEB-INF/jsp/"+laVue).forward(httpServletRequest, httpServletResponse);
+            Map<String,Object> datas = new HashMap<>();
+            datas.put("clients",clients);
+
+            listeClients.process(datas, httpServletResponse.getWriter());
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (TemplateException e){
+
         }
     }
 
-    //@Override
-    /* public void init() throws ServletException {
+    @Override
+    public void init() throws ServletException {
         super.init();
-        try {
-            String user = getInitParameter("user");
+        listeClients = (Template) getServletContext().getAttribute("listeClients");
+
+        /* try {
+           String user = getInitParameter("user");
             String password = getInitParameter("password");
             String driver = getInitParameter("driver");
 
@@ -74,10 +82,10 @@ public class ListeClients extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
             throw new ServletException("Pas de connexion à la base");
-        }
+        }*/
 
     }
-*/
+
 }
 
 
